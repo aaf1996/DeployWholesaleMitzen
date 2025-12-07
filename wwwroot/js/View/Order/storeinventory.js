@@ -35,7 +35,7 @@ Mitosiz.Site.StoreInventory.Index.Controller = function () {
             if (data) {
                 if (data.isSuccess) {
                     base.Parameters.totalPages = data.data.totalPages;
-                    base.Function.FillData(data.data.detailStoreInventoryForAdmin);
+                    base.Function.FillData(data.data.stockByStoreIdForAdmin);
                 }
             }
         },
@@ -106,10 +106,20 @@ Mitosiz.Site.StoreInventory.Index.Controller = function () {
             base.Control.tbodyTable().empty();
             listData.forEach(function (data) {
                 base.Control.tbodyTable().append('<tr style="text-align: center;">' +
-                    '<td><strong>' + data.storeInventoryId + '</strong></td>' +
                     '<td><img src="https://api.yosoymitzen.com/StaticFiles/ProductsImg/' + data.imageName + '" style="height: 80px"></td>' +
                     '<td>' + data.productName + '</td>' +
-                    '<td>' + data.quantity + '</td>' +
+                    '<td>' + data.realStock + '</td>' +
+                    '<td>' + data.stockShippingPending + '</td>' +
+                    '<td>' + data.physicalStock + '</td>' +
+                    '<td>' + data.purchasePending + '</td>' +
+                    '<td>' + data.expectedPendingPurchases + '</td>' +
+                    '<td>' + data.pricePartner + '</td>' +
+                    '<td>' + data.priceRealStock + '</td>' +
+                    '<td>' + data.products_LastPeriod + '</td>' +
+                    '<td>' + data.products_Previous1 + '</td>' +
+                    '<td>' + data.products_Previous2 + '</td>' +
+                    '<td>' + data.avgProducts + '</td>' +
+                    '<td>' + data.scopeStock + '</td>' +
                     '</tr>');
             });
             base.Function.UpdatePagination();
