@@ -28,6 +28,8 @@ Mitosiz.Site.ShoppingCart.Index.Controller = function () {
         slcTypePayment: function () { return $('#slcTypePayment'); },
         liTypePayment: function () { return $('#liTypePayment'); },
         btnCompletedOrder: function () { return $('#btnCompletedOrder'); },
+        divTypePurchase: function () { return $('#divTypePurchase'); },
+        divAvailableBalance: function () { return $('#divAvailableBalance'); },
     };
     base.Event = {
         AjaxSaveOrderSuccess: function (data) {
@@ -71,6 +73,10 @@ Mitosiz.Site.ShoppingCart.Index.Controller = function () {
             if (data) {
                 if (data.isSuccess) {
                     base.Control.lblAvailableBalance().text(data.data.amount);
+                    if (data.data.isWarehouse) {
+                        base.Control.divTypePurchase().removeClass("d-flex").hide();
+                        base.Control.divAvailableBalance().removeClass("d-flex").hide();
+                    }
                 }
             }
         },

@@ -28,6 +28,7 @@ Mitosiz.Site.Order.Index.Controller = function () {
         sizePagination: 12,
         countProducts: 0,
         productIdSelected: 0,
+        isWarehouse: false
     };
     base.Control = {
         divPagination: function () { return $('#pagination'); },
@@ -37,6 +38,8 @@ Mitosiz.Site.Order.Index.Controller = function () {
         btnShoppingCart: function () { return $('#btnShoppingCart'); },
         txtProduct: function () { return $('#txtProduct'); },
         slcTypePurchase: function () { return $('#slcTypePurchase'); },
+        divTypePurchase: function () { return $('#divTypePurchase'); },
+        divAvailableBalance: function () { return $('#divAvailableBalance'); },
     };
     base.Event = {
         AjaxGetProductsForOrderSuccess: function (data) {
@@ -61,6 +64,11 @@ Mitosiz.Site.Order.Index.Controller = function () {
             if (data) {
                 if (data.isSuccess) {
                     base.Control.lblAvailableBalance().text(data.data.amount);
+                    if (data.data.isWarehouse) {
+                        base.Parameters.isWarehouse = true;
+                        base.Control.divTypePurchase().hide();
+                        base.Control.divAvailableBalance().hide();
+                    }
                 }
             }
         },
@@ -337,13 +345,14 @@ Mitosiz.Site.Order.Index.Controller = function () {
                 var productId = parseInt($(this).attr('value-hidden'));
                 var quantity = parseInt($('#txtNumber' + productId).val());
                 base.Parameters.productIdSelected = productId;
-                if (base.Control.slcTypePurchase().val() != 0) {
+                if (base.Control.slcTypePurchase().val() != 0 || base.Parameters.isWarehouse) {
                     base.Ajax.AjaxAddToOrder.data = {
                         quantity: quantity,
                         productId: productId,
                         process: 'Addition',
                         typePurchaseId: base.Control.slcTypePurchase().val(),
-                        typePurchaseName: base.Control.slcTypePurchase().find('option:selected').text()
+                        typePurchaseName: base.Control.slcTypePurchase().find('option:selected').text(),
+                        isWarehouse: base.Parameters.isWarehouse
                     };
                     base.Ajax.AjaxAddToOrder.submit();
                 }
