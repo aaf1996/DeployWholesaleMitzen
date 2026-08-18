@@ -6,8 +6,10 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
         base.Function.clsNumberPagination();
         base.Control.btnClear().click(base.Event.btnClearClick);
         base.Control.btnSearch().click(base.Event.btnSearchClick);
+        base.Control.btnSaveImagenDelivery().click(base.Event.btnSaveImagenDeliveryClick);
         base.Function.clsDetailPurchaseClick();
         base.Function.clsApprobeShippingClick();
+        base.Function.clsAddedImageShippingClick();
         base.Function.clsNumberPaginationModal();
     };
     base.Parameters = {
@@ -18,7 +20,8 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
         totalPages: 1,
         totalPagesModal: 1,
         sizePagination: 10,
-        sizePaginationModal: 5
+        sizePaginationModal: 5,
+        purchaseIdImageShipping: 0,
     };
     base.Control = {
         btnClear: function () { return $('#btnClear'); },
@@ -32,7 +35,10 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
         txtUserName: function () { return $('#txtUserName'); },
         txtUserId: function () { return $('#txtUserId'); },
         txtPurchaseId: function () { return $('#txtPurchaseId'); },
+        txtImageDelivery: function () { return $('#txtImageDelivery'); },
         modalDetail: function () { return $('#modalDetail'); },
+        modalImageDelivery: function () { return $('#modalImageDelivery'); },
+        btnSaveImagenDelivery: function () { return $('#btnSaveImagenDelivery'); },
     };
     base.Event = {
         AjaxGetLoginSuccess: function (data) {
@@ -100,8 +106,52 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
                     base.Function.GetUserPurchases();
                 }
                 else {
-                    Swal.fire("Oops...", "Ocurrió un error, Por favor intententelo nuevamente", "error")
+                    Swal.fire("Oops...", data.message, "error")
                 }
+            }
+        },
+        AjaxSaveUrlProductsDeliveredSuccess: function (data) {
+            if (data) {
+                if (data.isSuccess) {
+                    Swal.fire("Excelente !!", "Imagen guardada !!", "success")
+                    base.Function.GetUserPurchases();
+                    base.Control.modalImageDelivery().modal('hide');
+                }
+                else {
+                    Swal.fire("Oops...", data.message, "error")
+                }
+            }
+        },
+        btnSaveImagenDeliveryClick: function () {
+            var fileInput = $('#txtImageDelivery')[0].files[0];
+            if (!fileInput) {
+                Swal.fire("Oops...", "Por favor, adjunte una imagen válida", "error")
+            }
+            else {
+                var formData = new FormData();
+                formData.append('file', fileInput);
+
+                $.ajax({
+                    url: Mitosiz.Site.UserPurchases.Actions.SaveProductsDeliveredImage,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data) {
+                            if (data.isSuccess) {
+                                base.Control.txtImageDelivery().val('');
+                                base.Function.SaveUrlProductsDelivered(data.data);
+                            }
+                            else {
+                                Swal.fire("Oops...", "Ocurrió un error, Por favor intententelo nuevamente", "error")
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Upload failed:', textStatus, errorThrown);
+                    }
+                });
             }
         },
     };
@@ -125,6 +175,11 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
             action: Mitosiz.Site.UserPurchases.Actions.ApprobeShippingStatusPurchase,
             autoSubmit: false,
             onSuccess: base.Event.AjaxApprobeShippingStatusPurchaseSuccess
+        }),
+        AjaxSaveUrlProductsDelivered: new Mitosiz.Site.UI.Web.Components.Ajax({
+            action: Mitosiz.Site.UserPurchases.Actions.SaveUrlProductsDelivered,
+            autoSubmit: false,
+            onSuccess: base.Event.AjaxSaveUrlProductsDeliveredSuccess
         }),
     };
     base.Function = {
@@ -170,6 +225,7 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
             base.Control.tbodyTable().empty();
             listData.forEach(function (data) {
                 var styleApprobeShipping = data.statusPurchase != 'Validada' ? "display:none;" : "";
+                var styleAddedShipping = data.urlProductsDelivered != '' || data.statusPurchase != 'Validada' ? "display:none;" : "";
                 base.Control.tbodyTable().append('<tr style="text-align: center;">' +
                     '<td><strong>' + data.purchaseId + '</strong></td>' +
                     '<td>' + data.registrationDate + '</td>' +
@@ -194,7 +250,13 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
                     '</a>' +
                     '</div></td>' +
                     '<td>' +
-                    '<div value-hidden="' + data.purchaseId +'" style="' + styleApprobeShipping + '" class="approbeShipping">' +
+                    '<div value-hidden="' + data.purchaseId + '" style="' + styleAddedShipping + '" class="addedImageShipping">' +
+                    '<a class= "btn btn-primary shadow btn-s sharp me-1" target="_blank">' +
+                    '<i class="fa-solid fa-image"></i>' +
+                    '</a>' +
+                    '</div></td>' +
+                    '<td>' +
+                    '<div value-hidden="' + data.purchaseId + '" style="' + styleApprobeShipping + '" class="approbeShipping">' +
                     '<a class= "btn btn-primary shadow btn-s sharp me-1" target="_blank">' +
                     '<i class="fa-solid fa-check"></i>' +
                     '</a>' +
@@ -271,6 +333,14 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
                 };
                 base.Ajax.AjaxApprobeShippingStatusPurchase.submit();
                 
+            });
+        },
+        clsAddedImageShippingClick: function () {
+            var parentElement = $(document);
+            parentElement.on('click', '.addedImageShipping', function () {
+                var purchaseId = $(this).attr('value-hidden');
+                base.Parameters.purchaseIdImageShipping = purchaseId;
+                base.Control.modalImageDelivery().modal('show');
             });
         },
         FillDataPurchaseDetailIntoModal: function (purchaseId) {
@@ -364,6 +434,12 @@ Mitosiz.Site.UserPurchases.Index.Controller = function () {
             };
             base.Ajax.AjaxGetPurchaseDetailForAdmin.submit();
         },
-
+        SaveUrlProductsDelivered: function (urlImage) {
+            base.Ajax.AjaxSaveUrlProductsDelivered.data = {
+                purchaseId: base.Parameters.purchaseIdImageShipping,
+                urlProductsDelivered: urlImage,
+            };
+            base.Ajax.AjaxSaveUrlProductsDelivered.submit();
+        },
     };
 }

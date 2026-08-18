@@ -150,12 +150,12 @@ Mitosiz.Site.Purchase.Index.Controller = function () {
         },
         AjaxGeneratePurchaseReportSuccess: function (data) {
             if (data) {
-                window.open('https://api.yosoymitosis.com/StaticFiles/ReportPurchases/' + data.data);
+                window.open('https://api.yosoymitzen.com/StaticFiles/ReportPurchases/' + data.data);
             }
         },
         AjaxGenerateDetailPurchaseReportSuccess: function (data) {
             if (data) {
-                window.open('https://api.yosoymitosis.com/StaticFiles/ReportDetailPurchases/' + data.data);
+                window.open('https://api.yosoymitzen.com/StaticFiles/ReportDetailPurchases/' + data.data);
             }
         },
         AjaxDeletePurchaseSuccess: function (data) {
@@ -444,7 +444,7 @@ Mitosiz.Site.Purchase.Index.Controller = function () {
         FillData: function (listData) {
             base.Control.tbodyTable().empty();
             listData.forEach(function (data) {
-                var urlVoucher = 'https://api.yosoymitosis.com/StaticFiles/PaymentImg/' + data.voucher;
+                var urlVoucher = 'https://api.yosoymitzen.com/StaticFiles/PaymentImg/' + data.voucher;
                 var styleVoucher = data.voucher == '' ? "display:none;" : "";
                 var styleDelete = data.statusPurchase == 'Evaluación' || data.statusPurchase == 'Realizada' ? "display:none;" : "";
                 base.Control.tbodyTable().append('<tr style="text-align: center;">' +
@@ -538,7 +538,7 @@ Mitosiz.Site.Purchase.Index.Controller = function () {
             listDetail.forEach(function (data) {
                 base.Control.tbodyDetailPurchase().append('<tr style="text-align: center;">' +
                     '<td>' + data.productName + '</td>' +
-                    '<td><img src="https://api.yosoymitosis.com/StaticFiles/ProductsImg/' + data.imageName + '" style="height: 80px"></td>' +
+                    '<td><img src="https://api.yosoymitzen.com/StaticFiles/ProductsImg/' + data.imageName + '" style="height: 80px"></td>' +
                     '<td>' + data.quantity + '</td>' +
                     '<td>' + data.subtotalNetAmount + '</td>' +
                     '<td>' + data.subtotalPoints + '</td>' +

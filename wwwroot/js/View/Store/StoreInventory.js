@@ -68,7 +68,7 @@ Mitosiz.Site.StoreInventory.Index.Controller = function () {
         },
         AjaxGenerateStoreInventoryReportSuccess: function (data) {
             if (data) {
-                window.open('https://api.yosoymitosis.com/StaticFiles/ReportStoreInventory/'+data.data);
+                window.open('https://api.yosoymitzen.com/StaticFiles/ReportStoreInventory/'+data.data);
             }
         },
         btnSearchClick: function () {

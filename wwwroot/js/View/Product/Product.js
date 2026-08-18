@@ -351,7 +351,7 @@ Mitosiz.Site.Product.Index.Controller = function () {
                     '</div></td>' +
                     '<td><strong>' + data.productId + '</strong></td>' +
                     '<td>' + data.productName + '</td>' +
-                    '<td><img src="https://api.yosoymitosis.com/StaticFiles/ProductsImg/' + data.imageName + '" style="height: 80px"></td>' +
+                    '<td><img src="https://api.yosoymitzen.com/StaticFiles/ProductsImg/' + data.imageName + '" style="height: 80px"></td>' +
                     '<td>' + data.price + '</td>' +
                     '<td>' + data.activationPoints + '</td>' +
                     '<td>' + data.networkPoints + '</td>' +
